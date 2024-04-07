@@ -1,6 +1,7 @@
 package org.example;
 
-
+import java.sql.SQLOutput;
+import java. util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,28 +9,45 @@ public class Program {
 
     public static void main(String[] args) {
 
-        List<Account> list = new ArrayList<>();
 
-        Account acc1 = new SavingsAccount(1001, "Alex", 500.0, 0.01);
-        list.add(acc1);
-        Account acc2 = new BusinessAccount(1002, "Maria", 1000.0, 400.0);
-        list.add(acc2);
-        Account acc3 = new SavingsAccount(1003, "Bob", 300.0, 0.01);
-        list.add(acc3);
-        Account acc4 = new BusinessAccount(1005, "Ana", 500.0, 500.0);
-        list.add(acc4);
+        Scanner sc = new Scanner (System.in);
+        List<TaxPayer> list = new ArrayList<>();
 
-        double sum = 0;
-        for (Account acc : list){
-            sum = sum + acc.getBalance();
-        }
-        System.out.println("Total Balance: " + sum);
+        System.out.print("Enter the number of tax payers: ");
+        int n = sc.nextInt();
 
-        for (Account ac : list){
-            ac.deposit(10.0);
+        for (int i = 1; i <=n; i++){
+            System.out.println("Payer #" + i + " data: ");
+            System.out.print("Individual or Company (i/c)? ");
+            char ch = sc.next().charAt(0);
+            if (ch == 'i'){
+                System.out.print("Name: ");
+                sc.nextLine();
+                String name = sc.nextLine();
+                System.out.print("Anual income: ");
+                double anualIncome = sc.nextDouble();
+                System.out.print("Health expenditures: ");
+                double healthExpenditures = sc.nextDouble();
+                TaxPayer tax = new Individual(name, anualIncome, healthExpenditures);
+                list.add(tax);
+            }
+            else {
+                System.out.print("Name: ");
+                sc.nextLine();
+                String name = sc.nextLine();
+                System.out.print("Anual income: ");
+                double anualIncome = sc.nextDouble();
+                System.out.print("Number of employees: ");
+                int numberOfEmployees = sc.nextInt();
+                TaxPayer tax = new Company(name, anualIncome, numberOfEmployees);
+                list.add(tax);
+            }
         }
-        for (Account ac : list){
-            System.out.println("Updated balance for account " + ac.getNumber()+ ": "+ ac.getBalance());
+        System.out.println();
+        System.out.println("TAXES PAID ");
+        for (TaxPayer tax : list ) {
+            System.out.println(tax);
         }
+
     }
 }
