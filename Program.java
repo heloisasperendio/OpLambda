@@ -1,31 +1,48 @@
 package org.example;
 
-import java.sql.SQLOutput;
-import java.util.InputMismatchException;
-import java. util.Scanner;
-import java.util.ArrayList;
-import java.util.List;
+import sun.java2d.pipe.SpanShapeRenderer;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Scanner;
+
 
 public class Program {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
 
         Scanner sc = new Scanner(System.in);
-        try {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-            String[] vect = sc.nextLine().split(" ");
-            int position = sc.nextInt();
-            System.out.print(vect[position]);
-        }
-        catch (ArrayIndexOutOfBoundsException e){
-            System.out.println("Invalid position!");
-        }
+        System.out.println("Room number: ");
+        int number = sc.nextInt();
+        System.out.println("Check-in date (dd/mm/yyyy)? ");
+        Date checkIn = sdf.parse(sc.next());
+        System.out.println("Check-out date (dd/mm/yyyy)? ");
+        Date checkOut = sdf.parse(sc.next());
 
-        catch (InputMismatchException e){
-            System.out.println("Input Error!");
-        }
+        if (checkOut.before(checkIn)) {
+            System.out.println("Error in reservation: Check-out date must be after check-in date");
+        } else {
+            Reservation reservation = new Reservation(number, checkIn, checkOut);
+            System.out.println("Reservation: " + reservation);
 
-        System.out.println("End of Program");
+            System.out.println();
+            System.out.println("Enter data to update the reservation: ");
+            System.out.println("Check-in date (dd/mm/yyyy)? ");
+            checkIn = sdf.parse(sc.next());
+            System.out.println("Check-out date (dd/mm/yyyy)? ");
+            checkOut = sdf.parse(sc.next());
+
+            String error = reservation.ipdateDates(checkIn, checkOut);
+            if (error != null) {
+                System.out.println("Error in reservation: " + error);
+            } else {
+                System.out.println("Reservation: " + reservation);
+            }
+
+        }
 
         sc.close();
 
