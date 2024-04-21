@@ -1,37 +1,29 @@
-//234
+//238
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Scanner;
 
 public class Program {
 
     public static void main(String[] args) {
-        List<Employee> list = new ArrayList<>();
-        String path = "C:\\temp\\in.txt";
 
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+        Scanner sc = new Scanner(System.in);
 
-            String employeeCsv = br.readLine();
+        PrintService <Integer> ps = new PrintService<>();
 
-            while (employeeCsv != null) {
-                String[] fields = employeeCsv.split(",");
-                list.add(new Employee(fields[0], Double.parseDouble(fields[1])));
-                employeeCsv = br.readLine();
-            }
+        System.out.print("How many values? ");
+        int n = sc.nextInt();
 
-            Collections.sort(list);
-            for (Employee emp : list) {
-                System.out.println(emp.getName() + ", " + emp.getSalary());
-            }
+        for (int i = 0; i < n; i++) {
+            Integer value = sc.nextInt();
+            ps.addValue(value);
         }
-        catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+
+        ps.print();
+        Integer x = ps.first();
+        System.out.println("First: " + x);
+
+        sc.close();
     }
 
 }
