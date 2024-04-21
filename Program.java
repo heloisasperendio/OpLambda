@@ -1,45 +1,37 @@
-//231
+//234
 package org.example;
 
-import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    public class Program {
+public class Program {
 
-        public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) {
+        List<Employee> list = new ArrayList<>();
+        String path = "C:\\temp\\in.txt";
 
-            Locale.setDefault(Locale.US);
-            Scanner sc = new Scanner(System.in);
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 
-            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            String employeeCsv = br.readLine();
 
-            System.out.println("Entre os dados do contrato:");
-            System.out.print("Numero: ");
-            int number = sc.nextInt();
-            System.out.print("Data (dd/MM/yyyy): ");
-            LocalDate date = LocalDate.parse(sc.next(), fmt);
-            System.out.print("Valor do contrato: ");
-            double totalValue = sc.nextDouble();
-
-            Contract obj = new Contract(number, date, totalValue);
-
-            System.out.print("Entre com o numero de parcelas: ");
-            int n = sc.nextInt();
-
-            ContractService contractService = new ContractService(new PaypalService());
-
-            contractService.processContract(obj, n);
-
-            System.out.println("Parcelas:");
-            for (Installment installment : obj.getInstallments()) {
-                System.out.println(installment);
+            while (employeeCsv != null) {
+                String[] fields = employeeCsv.split(",");
+                list.add(new Employee(fields[0], Double.parseDouble(fields[1])));
+                employeeCsv = br.readLine();
             }
 
-            sc.close();
+            Collections.sort(list);
+            for (Employee emp : list) {
+                System.out.println(emp.getName() + ", " + emp.getSalary());
+            }
+        }
+        catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
+}
