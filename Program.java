@@ -1,59 +1,46 @@
+//227
 package org.example;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Scanner;
 
+    public class Program {
 
-public class Program {
+        public static void main(String[] args) throws ParseException {
 
-    public static void main(String[] args){
+            Locale.setDefault(Locale.US);
+            Scanner sc = new Scanner(System.in);
 
-        Scanner sc = new Scanner(System.in);
+            DateTimeFormatter fmt =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        List<Product> list = new ArrayList<>();
+            System.out.println("Entre com os dados do aluguel");
+            System.out.print("Modelo do carro: ");
+            String carModel = sc.nextLine();
+            System.out.print("Retirada (dd/MM/yyyy HH:mm): ");
+            LocalDateTime start = LocalDateTime.parse(sc.nextLine(), fmt);
+            System.out.print("Retorno (dd/MM/yyyy HH:mm): ");
+            LocalDateTime finish = LocalDateTime.parse(sc.nextLine(), fmt);
 
-        System.out.println("Enter file path");
+            CarRental cr = new CarRental(start, finish, new Vehicle(carModel));
 
-        String sourceFileStr = sc.nextLine();
-        System.out.println(sourceFileStr);                                                       //se falhar a leitura desde arqauivo, cai para o catch
+            System.out.print("Entre com o preço por hora: ");
+            double pricePerHour = sc.nextDouble();
+            System.out.print("Entre com o preço por dia: ");
+            double pricePerDay = sc.nextDouble();
 
-        File sourceFile = new File(sourceFileStr);
-        String sourceFolderStr = sourceFile.getParent();
+            RentalService rentalService = new RentalService(pricePerDay, pricePerHour, new BrazilTaxService());
 
-        boolean success = new File(sourceFolderStr + "/out").mkdir();
+            rentalService.processInvoice(cr);
 
-        String targetFileStr = sourceFolderStr + "\\out\\summary.csv";
+            System.out.println("FATURA:");
+            System.out.println("Pagamento basico: " + String.format("%.2f", cr.getInvoice().getBasicPayment()));
+            System.out.println("Imposto: " + String.format("%.2f", cr.getInvoice().getTax()));
+            System.out.println("Pagamento total: " + String.format("%.2f", cr.getInvoice().getTotalPayment()));
 
-        try (BufferedReader br = new BufferedReader(new FileReader(sourceFileStr))){
-
-            String itemCsv = br.readLine();
-            while( itemCsv != null){
-
-                String[] fields = itemCsv.split(",");                                      //quebra a linha em 3 valores, separados pela virgula
-                String name = fields[0];
-                double price = Double.parseDouble(fields[1]);
-                int quantity = Integer.parseInt(fields[2]);
-
-                list.add(new Product(name, price, quantity));
-
-                itemCsv = br.readLine();
-            }
-            try(BufferedWriter bw = new BufferedWriter(new FileWriter(targetFileStr))){
-
-                for (Product item: list) {
-                    bw.write(item.getName() + ", " + item.total());
-                    bw.newLine();
-                }
-                System.out.println("CREATED");
-            }
-            catch(IOException e){
-                System.out.println("Error writing file: " + e.getMessage());
-            }
-        }
-        catch (IOException e) {
-            System.out.println("Error writing file: " + e.getMessage());
+            sc.close();
         }
     }
 
-}
