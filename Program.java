@@ -1,8 +1,11 @@
 package org.example;
-
-import java.util.HashSet;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Program {
 
@@ -10,32 +13,43 @@ public class Program {
 
         Scanner sc = new Scanner(System.in);
 
-        Set<Integer> set = new HashSet<>();
+        System.out.print("Enter full file path: ");
+        String path = sc.nextLine();
 
-        System.out.print("Quantos estudantes para o curso A? ");
-        int n = sc.nextInt();
-        for (int i =0; i< n; i++){
-            int codigo = sc.nextInt();
-            set.add(codigo);
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+
+            List<Product> list = new ArrayList<>();
+
+            String line = br.readLine();
+            while (line != null) {
+                String[] fields = line.split(",");
+                list.add(new Product(fields[0], fields[1], Double.parseDouble(fields[2])));
+                line = br.readLine();
+            }
+
+            System.out.print("Enter salary: ");
+            double s = sc.nextDouble();
+
+            List<String> emails = list.stream()
+                    .filter(p -> p.getSalary() > s)
+                    .map(p -> p.getEmail())
+                    .collect(Collectors.toList());
+
+            emails.forEach(System.out::println);
+
+            double sum = list.stream()
+                    .filter(p -> p.getName().charAt(0) == 'M')
+                    .map(p -> p.getSalary())
+                    .reduce(0.0, (x,y) -> x+ y );
+
+            System.out.println("Sum of salary of people whose name starts with 'M': " + sum);
         }
-        System.out.print("Quantos estudantes para o curso B?");
-        int n1 = sc.nextInt();
-        for (int i =0; i< n1; i++){
-            int codigo = sc.nextInt();
-            set.add(codigo);
+
+
+         catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
         }
-        System.out.print("Quantos estudantes para o curso C?");
-        int n2 = sc.nextInt();
-        for (int i =0; i< n2; i++){
-            int codigo = sc.nextInt();
-            set.add(codigo);
-        }
-
-
-
-        System.out.println("Total students: " + set.size());
-
-
+        sc.close();
 
     }
 }
